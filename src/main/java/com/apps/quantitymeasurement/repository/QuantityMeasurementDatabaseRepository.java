@@ -29,84 +29,115 @@ public class QuantityMeasurementDatabaseRepository implements IQuantityMeasureme
 	private static final String DELETE_ALL_SQL = "DELETE FROM quantity_measurement_entity";
 
 	private static QuantityMeasurementDatabaseRepository instance;
+
 	private final ConnectionPool connectionPool;
 
 	private QuantityMeasurementDatabaseRepository() {
 		this.connectionPool = ConnectionPool.getInstance();
-		logger.info("QuantityMeasurementDatabaseRepository initialised");
+		logger.info("QuantityMeasurementDatabaseRepository initialized");
 	}
 
-	public static QuantityMeasurementDatabaseRepository getInstance() {
+	public static synchronized QuantityMeasurementDatabaseRepository getInstance() {
+
 		if (instance == null) {
 			instance = new QuantityMeasurementDatabaseRepository();
 		}
+
 		return instance;
 	}
 
 	@Override
 	public void save(QuantityMeasurementEntity entity) {
+
 		try (Connection conn = connectionPool.getConnection();
 				PreparedStatement ps = conn.prepareStatement(INSERT_SQL)) {
 
 			ps.setDouble(1, entity.thisValue);
 			ps.setString(2, entity.thisUnit);
 			ps.setString(3, entity.thisMeasurementType);
+
 			ps.setObject(4, entity.thatValue, Types.DOUBLE);
 			ps.setString(5, entity.thatUnit);
 			ps.setString(6, entity.thatMeasurementType);
+
 			ps.setString(7, entity.operation);
+
 			ps.setObject(8, entity.resultValue, Types.DOUBLE);
 			ps.setString(9, entity.resultUnit);
 			ps.setString(10, entity.resultMeasurementType);
+
 			ps.setString(11, entity.resultString);
 			ps.setBoolean(12, entity.isError);
 			ps.setString(13, entity.errorMessage);
 
 			ps.executeUpdate();
+
 		} catch (SQLException e) {
-			throw DatabaseException.queryFailed("INSERT quantity_measurement_entity", e);
+
+			throw new DatabaseException("INSERT quantity_measurement_entity failed", e);
+
 		}
+
 	}
 
 	@Override
 	public List<QuantityMeasurementEntity> getAllMeasurements() {
+
 		List<QuantityMeasurementEntity> list = new ArrayList<>();
+
 		try (Connection conn = connectionPool.getConnection();
 				PreparedStatement ps = conn.prepareStatement(SELECT_ALL_SQL);
 				ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
-				QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
+
+				QuantityMeasurementEntity entity = new QuantityMeasurementEntity(null, null, null);
+
 				entity.thisValue = rs.getDouble("this_value");
 				entity.thisUnit = rs.getString("this_unit");
 				entity.thisMeasurementType = rs.getString("this_measurement_type");
+
 				entity.thatValue = rs.getDouble("that_value");
 				entity.thatUnit = rs.getString("that_unit");
 				entity.thatMeasurementType = rs.getString("that_measurement_type");
+
 				entity.operation = rs.getString("operation");
+
 				entity.resultValue = rs.getDouble("result_value");
 				entity.resultUnit = rs.getString("result_unit");
 				entity.resultMeasurementType = rs.getString("result_measurement_type");
+
 				entity.resultString = rs.getString("result_string");
 				entity.isError = rs.getBoolean("is_error");
 				entity.errorMessage = rs.getString("error_message");
+
 				list.add(entity);
+
 			}
+
 		} catch (SQLException e) {
-			throw DatabaseException.queryFailed("SELECT * FROM quantity_measurement_entity", e);
+
+			throw new DatabaseException("SELECT quantity_measurement_entity failed", e);
+
 		}
-		logger.info("Loaded " + list.size() + " entities from DB");
+
+		logger.info("Loaded " + list.size() + " records from DB");
+
 		return list;
 	}
 
-	// extra helper for tests / cleanup
-	@Override
 	public void deleteAll() {
+
 		try (Connection conn = connectionPool.getConnection();
 				PreparedStatement ps = conn.prepareStatement(DELETE_ALL_SQL)) {
+
 			ps.executeUpdate();
+
 		} catch (SQLException e) {
-			throw DatabaseException.queryFailed("DELETE FROM quantity_measurement_entity", e);
+
+			throw new DatabaseException("DELETE quantity_measurement_entity failed", e);
+
 		}
+
 	}
 }

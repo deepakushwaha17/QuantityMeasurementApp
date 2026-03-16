@@ -137,5 +137,4 @@ public class QuantityDTO {
 	public String toString() {
 		return "QuantityDTO(" + value + ", " + unit + ", " + measurementType + ")";
 	}
-	
 }
