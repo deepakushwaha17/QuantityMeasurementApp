@@ -180,13 +180,13 @@ public @Data class QuantityMeasurementDTO {
 		if (entities == null) {
 			return List.of();
 		}
-		return entities.stream().map(QuantityMeasurementDTO::from).collect(Collectors.toList());
+		return entities.stream().map(QuantityMeasurementDTO::from).toList();
 	}
 
 	public static List<QuantityMeasurementEntity> toEntityList(List<QuantityMeasurementDTO> dtos) {
 		if (dtos == null) {
 			return List.of();
 		}
-		return dtos.stream().map(QuantityMeasurementDTO::toEntity).collect(Collectors.toList());
+		return dtos.stream().map(QuantityMeasurementDTO::toEntity).toList();
 	}
 }

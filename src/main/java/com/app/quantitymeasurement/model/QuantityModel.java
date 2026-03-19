@@ -27,7 +27,7 @@ public class QuantityModel<U extends IMeasurable> {
         this.value = value;
     }
 
-    public void setUnit(U unit) {
+    public void setUnit(U unit) { 
         this.unit = unit;
     }
 

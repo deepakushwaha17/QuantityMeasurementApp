@@ -1,6 +1,6 @@
 package com.app.quantitymeasurement;
 
-/*import com.app.quantitymeasurement.model.QuantityDTO;
+import com.app.quantitymeasurement.model.QuantityDTO;
 import com.app.quantitymeasurement.model.QuantityInputDTO;
 import com.app.quantitymeasurement.model.QuantityMeasurementDTO;
 
@@ -10,76 +10,76 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
-
+import static org.assertj.core.api.Assertions.offset;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)*/
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class QuantityMeasurementAppApplicationTests {
-/*
-    @LocalServerPort
-    private int port;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+	@LocalServerPort
+	private int port;
 
-    private String baseUrl() {
-        return "http://localhost:" + port + "/api/v1/quantities";
-    }
+	@Autowired
+	private TestRestTemplate restTemplate;
 
-    private QuantityInputDTO input(double v1, String u1, String t1,
-                                  double v2, String u2, String t2) {
-        QuantityInputDTO dto = new QuantityInputDTO();
-        dto.setThisQuantityDTO(new QuantityDTO(v1, u1, t1));
-        dto.setThatQuantityDTO(new QuantityDTO(v2, u2, t2));
-        return dto;
-    }
+	private String baseUrl() {
+		return "http://localhost:" + port + "/api/v1/quantities";
+	}
 
-    private HttpEntity<QuantityInputDTO> json(QuantityInputDTO body) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON); // ✅ Correct MediaType
-        return new HttpEntity<>(body, headers);
-    }
+	private QuantityInputDTO input(double v1, String u1, String t1, double v2, String u2, String t2) {
+		QuantityInputDTO dto = new QuantityInputDTO();
+		dto.setThisQuantityDTO(new QuantityDTO(v1, u1, t1));
+		dto.setThatQuantityDTO(new QuantityDTO(v2, u2, t2));
+		return dto;
+	}
 
-    @Test
-    @Order(1)
-    void testConvert_CelsiusToFahrenheit() {
+	private HttpEntity<QuantityInputDTO> json(QuantityInputDTO body) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		return new HttpEntity<>(body, headers);
+	}
 
-        QuantityInputDTO body = input(
-                100, "CELSIUS", "TemperatureUnit",
-                0, "FAHRENHEIT", "TemperatureUnit"
-        );
+	// TEST: SUBTRACT
+	@Test
+	@Order(1)
+	void testSubtract_Weight() {
 
-        ResponseEntity<QuantityMeasurementDTO> res =
-                restTemplate.exchange(
-                        baseUrl() + "/convert",
-                        HttpMethod.POST,
-                        json(body),
-                        QuantityMeasurementDTO.class
-                );
+		// Subtract 500 grams from 2 kilograms → result should be 1.5 kilograms
+		QuantityInputDTO body = input(2, "KILOGRAM", "WeightUnit", 500, "GRAM", "WeightUnit");
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(res.getBody().getResultValue()).isEqualTo(212.0);
-    }
+		ResponseEntity<QuantityMeasurementDTO> res = restTemplate.exchange(baseUrl() + "/subtract", HttpMethod.POST,
+				json(body), QuantityMeasurementDTO.class);
 
-    @Test
-    @Order(2)
-    void testAdd_Length() {
+		// Check response
+		assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(res.getBody()).isNotNull();
 
-        QuantityInputDTO body = input(
-                1, "FEET", "LengthUnit",
-                12, "INCHES", "LengthUnit"
-        );
+		QuantityMeasurementDTO response = res.getBody();
 
-        ResponseEntity<QuantityMeasurementDTO> res =
-                restTemplate.exchange(
-                        baseUrl() + "/add",
-                        HttpMethod.POST,
-                        json(body),
-                        QuantityMeasurementDTO.class
-                );
+		// Validate output
+		assertThat(response.isError()).isFalse();
+		assertThat(response.getResultValue()).isCloseTo(1.5, offset(0.001));
+		assertThat(response.getResultUnit()).isEqualTo("KILOGRAM");
+	}
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(res.getBody().getResultValue()).isEqualTo(2.0);
-    }*/
+	// TEST: ADD
+	@Test
+	@Order(2)
+	void testAdd_Length() {
+
+		QuantityInputDTO body = input(1, "FEET", "LengthUnit", 12, "INCHES", "LengthUnit");
+
+		ResponseEntity<QuantityMeasurementDTO> res = restTemplate.exchange(baseUrl() + "/add", HttpMethod.POST,
+				json(body), QuantityMeasurementDTO.class);
+
+		assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(res.getBody()).isNotNull();
+
+		QuantityMeasurementDTO response = res.getBody();
+
+		assertThat(response.isError()).isFalse();
+		assertThat(response.getResultValue()).isCloseTo(2.0, offset(0.001));
+		assertThat(response.getResultUnit()).isEqualTo("FEET");
+	}
 }

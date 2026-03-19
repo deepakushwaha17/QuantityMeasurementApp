@@ -3,6 +3,7 @@ package com.app.quantitymeasurement.model;
 import java.util.logging.Logger;
 
 import com.app.quantitymeasurement.unit.IMeasurable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
@@ -245,6 +246,7 @@ public class QuantityDTO {
 		}
 		return true;
 	}
+	
 	
 	public IMeasurable getUnitInstance() {
 

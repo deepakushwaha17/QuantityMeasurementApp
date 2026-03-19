@@ -50,6 +50,7 @@ public class QuantityMeasurementEntity {
 
 	@Column(name = "is_error")
 	public boolean isError;
+	@Lob
 	@Column(name = "error_message")
 	public String errorMessage;
 
@@ -177,71 +178,114 @@ public class QuantityMeasurementEntity {
 	public QuantityMeasurementEntity() {
 
 	}
-	
-	public QuantityMeasurementEntity(double thisValue, String thisUnit, String thisMeasurementType, String operation,
-			double resultValue, String resultUnit, String resultMeasurementType) {
 
-		this.thisValue = thisValue;
-		this.thisUnit = thisUnit;
-		this.thisMeasurementType = thisMeasurementType;
-		this.operation = operation;
-
-		this.resultValue = resultValue;
-		this.resultUnit = resultUnit;
-		this.resultMeasurementType = resultMeasurementType;
-
-		this.isError = false;
+	private QuantityMeasurementEntity(Builder builder) {
+		this.thisValue = builder.thisValue;
+		this.thisUnit = builder.thisUnit;
+		this.thisMeasurementType = builder.thisMeasurementType;
+		this.thatValue = builder.thatValue;
+		this.thatUnit = builder.thatUnit;
+		this.thatMeasurementType = builder.thatMeasurementType;
+		this.operation = builder.operation;
+		this.resultString = builder.resultString;
+		this.resultValue = builder.resultValue;
+		this.resultUnit = builder.resultUnit;
+		this.resultMeasurementType = builder.resultMeasurementType;
+		this.errorMessage = builder.errorMessage;
+		this.isError = builder.isError;
 	}
 
-	public QuantityMeasurementEntity(double thisValue, String thisUnit, String thisMeasurementType, double thatValue,
-			String thatUnit, String thatMeasurementType, String operation, double resultValue, String resultUnit,
-			String resultMeasurementType) {
-
-		this.thisValue = thisValue;
-		this.thisUnit = thisUnit;
-		this.thisMeasurementType = thisMeasurementType;
-
-		this.thatValue = thatValue;
-		this.thatUnit = thatUnit;
-		this.thatMeasurementType = thatMeasurementType;
-
-		this.operation = operation;
-
-		this.resultValue = resultValue;
-		this.resultUnit = resultUnit;
-		this.resultMeasurementType = resultMeasurementType;
-
-		this.isError = false;
+	public static Builder builder() {
+		return new Builder();
 	}
 
-	public QuantityMeasurementEntity(double thisValue, String thisUnit, String thisMeasurementType, double thatValue,
-			String thatUnit, String thatMeasurementType, String operation, String resultString) {
+	public static class Builder {
+		private Double thisValue;
+		private String thisUnit;
+		private String thisMeasurementType;
 
-		this.thisValue = thisValue;
-		this.thisUnit = thisUnit;
-		this.thisMeasurementType = thisMeasurementType;
+		private Double thatValue;
+		private String thatUnit;
+		private String thatMeasurementType;
 
-		this.thatValue = thatValue;
-		this.thatUnit = thatUnit;
-		this.thatMeasurementType = thatMeasurementType;
+		private String operation;
 
-		this.operation = operation;
-		this.resultString = resultString;
+		private String resultString;
+		private Double resultValue;
+		private String resultUnit;
+		private String resultMeasurementType;
 
-		this.isError = false;
-	}
+		private String errorMessage;
+		private boolean isError;
 
-	public QuantityMeasurementEntity(double thisValue, String thisUnit, String thisMeasurementType, String operation,
-			String errorMessage) {
+		public Builder thisValue(Double val) {
+			this.thisValue = val;
+			return this;
+		}
 
-		this.thisValue = thisValue;
-		this.thisUnit = thisUnit;
-		this.thisMeasurementType = thisMeasurementType;
+		public Builder thisUnit(String unit) {
+			this.thisUnit = unit;
+			return this;
+		}
 
-		this.operation = operation;
-		this.errorMessage = errorMessage;
+		public Builder thisMeasurementType(String type) {
+			this.thisMeasurementType = type;
+			return this;
+		}
 
-		this.isError = true;
+		public Builder thatValue(Double val) {
+			this.thatValue = val;
+			return this;
+		}
+
+		public Builder thatUnit(String unit) {
+			this.thatUnit = unit;
+			return this;
+		}
+
+		public Builder thatMeasurementType(String type) {
+			this.thatMeasurementType = type;
+			return this;
+		}
+
+		public Builder operation(String op) {
+			this.operation = op;
+			return this;
+		}
+
+		public Builder resultString(String result) {
+			this.resultString = result;
+			return this;
+		}
+
+		public Builder resultValue(Double val) {
+			this.resultValue = val;
+			return this;
+		}
+
+		public Builder resultUnit(String unit) {
+			this.resultUnit = unit;
+			return this;
+		}
+
+		public Builder resultMeasurementType(String type) {
+			this.resultMeasurementType = type;
+			return this;
+		}
+
+		public Builder errorMessage(String msg) {
+			this.errorMessage = msg;
+			return this;
+		}
+
+		public Builder isError(boolean error) {
+			this.isError = error;
+			return this;
+		}
+
+		public QuantityMeasurementEntity build() {
+			return new QuantityMeasurementEntity(this);
+		}
 	}
 
 }
