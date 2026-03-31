@@ -1,7 +1,6 @@
 package com.app.quantitymeasurement.model;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
