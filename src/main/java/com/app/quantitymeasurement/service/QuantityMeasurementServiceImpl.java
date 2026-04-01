@@ -75,8 +75,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
 			double result = convertTo(source, target);
 
-			QuantityMeasurementEntity entity = buildEntity("CONVERT", thisDTO, null, thatDTO, result, null, false,
-					null);
+			QuantityMeasurementEntity entity = buildEntity("CONVERT", thisDTO, thatDTO, thatDTO, result, null, false, null);
 
 			return QuantityMeasurementDTO.from(repository.save(entity));
 

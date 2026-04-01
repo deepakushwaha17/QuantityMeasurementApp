@@ -3,20 +3,17 @@ package com.app.quantitymeasurement.model;
 import java.util.logging.Logger;
 
 import com.app.quantitymeasurement.unit.IMeasurable;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
 
 interface IMeasurableUnit {
 	 String getUnitName();
 	 String getMeasurementType();
 }
 
-@Data
 @Schema(description = "A quantity with value and unit")
 public class QuantityDTO {
 
