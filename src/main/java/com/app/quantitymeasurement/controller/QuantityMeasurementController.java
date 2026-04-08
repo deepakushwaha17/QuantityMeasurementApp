@@ -1,7 +1,6 @@
 package com.app.quantitymeasurement.controller;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +21,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
      description = "REST API for quantity measurement operations")  
 public class QuantityMeasurementController {
 
-    private static final Logger logger =
-            Logger.getLogger(QuantityMeasurementController.class.getName());
-
     @Autowired
     private IQuantityMeasurementService service;
 
@@ -34,54 +30,36 @@ public class QuantityMeasurementController {
     @Operation(summary = "Compare two quantities")
     public ResponseEntity<QuantityMeasurementDTO> performComparison(
             @Valid @RequestBody QuantityInputDTO input) {
-
-        try {
             return ResponseEntity.ok(
                     service.compare(
                             input.getThisQuantityDTO(),
                             input.getThatQuantityDTO()
                     )
             );
-        } catch (Exception e) {
-            logger.warning(e.getMessage());
-            return ResponseEntity.badRequest().body(errorDTO(e));
-        }
     }
 
     @PostMapping("/convert")
     @Operation(summary = "Convert quantity to target unit")
     public ResponseEntity<QuantityMeasurementDTO> performConversion(
             @Valid @RequestBody QuantityInputDTO input) {
-
-        try {
             return ResponseEntity.ok(
                     service.convert(
                             input.getThisQuantityDTO(),
                             input.getThatQuantityDTO()
                     )
             );
-        } catch (Exception e) {
-            logger.warning(e.getMessage());
-            return ResponseEntity.badRequest().body(errorDTO(e));
-        }
     }
 
     @PostMapping("/add")
     @Operation(summary = "Add two quantities")
     public ResponseEntity<QuantityMeasurementDTO> performAddition(
             @Valid @RequestBody QuantityInputDTO input) {
-
-        try {
             return ResponseEntity.ok(
                     service.add(
                             input.getThisQuantityDTO(),
                             input.getThatQuantityDTO()
                     )
             );
-        } catch (Exception e) {
-            logger.warning(e.getMessage());
-            return ResponseEntity.badRequest().body(errorDTO(e));
-        }
     }
 
     @PostMapping("/add-with-target-unit")
@@ -89,7 +67,6 @@ public class QuantityMeasurementController {
     public ResponseEntity<QuantityMeasurementDTO> performAdditionWithTargetUnit(
             @Valid @RequestBody QuantityInputDTO input) {
 
-        try {
             return ResponseEntity.ok(
                     service.add(
                             input.getThisQuantityDTO(),
@@ -97,36 +74,24 @@ public class QuantityMeasurementController {
                             input.getTargetQuantityDTO()
                     )
             );
-        } catch (Exception e) {
-            logger.warning(e.getMessage());
-            return ResponseEntity.badRequest().body(errorDTO(e));
-        }
     }
 
     @PostMapping("/subtract")
     @Operation(summary = "Subtract two quantities")
     public ResponseEntity<QuantityMeasurementDTO> performSubtraction(
             @Valid @RequestBody QuantityInputDTO input) {
-
-        try {
             return ResponseEntity.ok(
                     service.subtract(
                             input.getThisQuantityDTO(),
                             input.getThatQuantityDTO()
                     )
             );
-        } catch (Exception e) {
-            logger.warning(e.getMessage());
-            return ResponseEntity.badRequest().body(errorDTO(e));
-        }
     }
 
     @PostMapping("/subtract-with-target-unit")
     @Operation(summary = "Subtract with target unit")
     public ResponseEntity<QuantityMeasurementDTO> performSubtractionWithTargetUnit(
             @Valid @RequestBody QuantityInputDTO input) {
-
-        try {
             return ResponseEntity.ok(
                     service.subtract(
                             input.getThisQuantityDTO(),
@@ -134,10 +99,6 @@ public class QuantityMeasurementController {
                             input.getTargetQuantityDTO()
                     )
             );
-        } catch (Exception e) {
-            logger.warning(e.getMessage());
-            return ResponseEntity.badRequest().body(errorDTO(e));
-        }
     }
 
     @PostMapping("/divide")
@@ -145,17 +106,12 @@ public class QuantityMeasurementController {
     public ResponseEntity<QuantityMeasurementDTO> performDivision(
             @Valid @RequestBody QuantityInputDTO input) {
 
-        try {
             return ResponseEntity.ok(
                     service.divide(
                             input.getThisQuantityDTO(),
                             input.getThatQuantityDTO()
                     )
             );
-        } catch (Exception e) {
-            logger.warning(e.getMessage());
-            return ResponseEntity.badRequest().body(errorDTO(e));
-        }
     }
 
     // HISTORY APIs
