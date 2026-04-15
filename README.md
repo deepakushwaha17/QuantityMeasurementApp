@@ -23,7 +23,7 @@ The application is developed incrementally, starting with simple functionalities
 
 ## 📂 Use Cases (UCs Completed)
 
-### 1️⃣ UC1 – Feet Measurement Equality 
+### UC1 – Feet Measurement Equality 
  
  **Description:** <br>
  Checks equality between two numeric values in feet.
@@ -46,7 +46,7 @@ The application is developed incrementally, starting with simple functionalities
  - Null and type safety
  - Unit testing best practices 
 
-### 2️⃣ UC2 – Feet and Inches Measurement Equality 
+### UC2 – Feet and Inches Measurement Equality 
 
 **Description:** <br>
 Extends UC1 to include inches. Feet and inches are compared separately.
@@ -66,7 +66,7 @@ Extends UC1 to include inches. Feet and inches are compared separately.
 - DRY violation noticed (duplicated logic between Feet & Inches).
 - Same UC1 concepts applied to inches.
 
-### 3️⃣ UC3 – Generic Quantity Class for DRY Principle
+### UC3 – Generic Quantity Class for DRY Principle
 
 **Description:** <br>
 Refactors Feet & Inches into a generic QuantityLength class with a LengthUnit enum to eliminate code duplication.
@@ -90,7 +90,7 @@ Refactors Feet & Inches into a generic QuantityLength class with a LengthUnit en
 - Encapsulation & single responsibility
 - Cross-unit equality testing
 
-### 4️⃣ UC4 – Extended Unit Support
+### UC4 – Extended Unit Support
 
 **Description:** <br>
 Adds yards and centimeters to QuantityLength, demonstrating scalability of the generic design.
@@ -112,7 +112,7 @@ Adds yards and centimeters to QuantityLength, demonstrating scalability of the g
 - Multi-unit comparison & transitive property
 - Enum extensibility & backward compatibility
 
-### 5️⃣ UC5 – Unit-to-Unit Conversion
+### UC5 – Unit-to-Unit Conversion
 
 **Description:** <br>
 Exposes conversion operations between units instead of just equality.
@@ -136,3 +136,304 @@ Exposes conversion operations between units instead of just equality.
 - Base unit normalization
 - Enum integration for conversion factors
 - Polymorphism (Method Overloading)
+
+### UC6 – Addition of Two Length Units
+
+**Description:**<br>
+Implements addition of two length quantities with automatic unit handling.
+
+**What We Did:**
+- Implemented addition of two Length objects
+- Used base unit (inches) for internal calculation
+- Converted both operands to base unit before addition
+- Converted result back to the first operand’s unit
+- Maintained immutability by returning a new object
+
+**Example Usage:**
+
+| Method Call      | Output |
+| ---------------- | ------ |
+| add(1 ft, 12 in) | 2 ft   |
+| add(2 yd, 36 in) | 3 yd   |
+
+**Concepts Learned:**
+-Unit normalization
+- Immutability
+- Object-oriented design
+
+### UC7 – Addition with Explicit Target Unit
+
+**Description:**<br>
+Allows addition of quantities with a specified target unit for output.
+
+**What We Did:**
+- Added method add(length1, length2, targetUnit)
+- Converted both operands to base unit
+- Converted result into desired target unit
+- Improved flexibility of arithmetic operations
+
+**Example Usage:**
+
+| Method Call              | Output |
+| ------------------------ | ------ |
+| add(1 ft, 12 in, INCHES) | 24 in  |
+| add(2 yd, 1 ft, FEET)    | 7 ft   |
+
+**Concepts Learned:**
+- Method overloading
+- Flexible API design
+- Unit conversion abstraction
+
+### UC8 – Refactoring Unit Enum
+
+**Description:**<br>
+Improves code structure by separating unit logic into an enum.
+
+**What We Did:**
+- Extracted LengthUnit into a standalone enum
+- Moved conversion logic from class to enum
+- Applied Single Responsibility Principle
+- Improved separation of concerns
+
+**Example Usage:**
+
+| Operation                   | Result |
+| --------------------------- | ------ |
+| LengthUnit.FEET.toInches(1) | 12     |
+| LengthUnit.YARDS.toFeet(1)  | 3      |
+
+**Concepts Learned:**
+- Enum-based design
+- Single Responsibility Principle (SRP)
+- Clean code practices
+
+### UC9 – Weight Measurement Support
+
+**Description:**<br>
+Introduces weight measurement with proper unit handling and validation.
+
+**What We Did:**
+- Added new category: Weight
+- Created WeightUnit enum (kg, g, lb)
+- Implemented equality, conversion, and addition
+- Prevented comparison between different categories
+
+**Example Usage:**
+
+| Method Call        | Output  |
+| ------------------ | ------- |
+| add(1 kg, 1000 g)  | 2 kg    |
+| compare(1 kg, 1 m) | Invalid |
+
+**Concepts Learned:**
+- Type safety
+- Domain modeling
+- Validation logic
+
+### UC10 – Generic Quantity with Unit Interface
+
+**Description:**<br>
+Creates a generic and reusable measurement system using interfaces.
+
+**What We Did:**
+- Introduced IMeasurable interface
+- Created generic Quantity class
+- Replaced separate classes with one generic solution
+- Ensured type safety across categories
+- Applied DRY principle
+
+**Example Usage:**
+
+| Operation             | Output |
+| --------------------- | ------ |
+| new Quantity(1, FEET) | Valid  |
+| new Quantity(1, KG)   | Valid  |
+
+**Concepts Learned:**
+- Generics in Java
+- Interface-based design
+- DRY (Don’t Repeat Yourself)
+
+### UC11 – Volume Measurement
+
+**Description:**<br>
+Adds volume measurement support using the generic system.
+
+**What We Did:**
+- Added Volume category
+- Created VolumeUnit enum (L, mL, gallon)
+- Supported equality, conversion, and addition
+- No changes required in generic logic
+
+**Example Usage:**
+
+| Method Call          | Output  |
+| -------------------- | ------- |
+| add(1 L, 1000 mL)    | 2 L     |
+| convert(1 gallon, L) | 3.785 L |
+
+**Concepts Learned:**
+- Extensibility
+- Reusability of generic code
+- Open/Closed Principle
+
+### UC12 – Subtraction and Division
+
+**Description:**<br>
+Extends arithmetic capabilities to subtraction and division.
+
+**What We Did:**
+- Added subtraction and division methods
+- Supported cross-unit arithmetic within same category
+- Maintained immutability and consistency
+
+**Example Usage:**
+
+| Method Call           | Output |
+| --------------------- | ------ |
+| subtract(2 ft, 12 in) | 1 ft   |
+| divide(2 ft, 2)       | 1 ft   |
+
+**Concepts Learned:**
+- Arithmetic abstraction
+- Code consistency
+- Immutable operations
+
+### UC13 – Centralized Arithmetic Logic
+
+**Description:**<br>
+Refactors arithmetic operations into a shared logic block.
+
+**What We Did:**
+- Centralized arithmetic logic into common method
+- Removed duplicate code from operations
+- Improved maintainability and readability
+
+**Example Usage:**
+
+| Operation         | Benefit               |
+| ----------------- | --------------------- |
+| add(), subtract() | Uses shared logic     |
+| division()        | Reuses same structure |
+
+**Concepts Learned:**
+- Code reusability
+- Refactoring techniques
+- Maintainability
+
+### UC14 – Temperature Measurement
+
+**Description:**<br>
+Adds temperature support with restricted operations.
+
+**What We Did:**
+- Added Temperature category
+- Created units (Celsius, Fahrenheit, Kelvin)
+- Supported only conversion and comparison
+- Restricted invalid arithmetic operations
+
+**Example Usage:**
+
+| Method Call     | Output  |
+| --------------- | ------- |
+| convert(0°C, F) | 32°F    |
+| add(30°C, 20°C) | Invalid |
+
+**Concepts Learned:**
+- Domain constraints
+- Validation rules
+- Specialized logic handling
+
+### UC15 – N-Tier Architecture Refactoring
+
+**Description:**<br>
+Improves project structure using layered architecture.
+
+**What We Did:**
+- Introduced Controller, Service, Repository layers
+- Applied SOLID principles
+- Improved scalability and separation of concerns
+  
+**Example Usage:**
+
+| Layer      | Responsibility |
+| ---------- | -------------- |
+| Controller | API handling   |
+| Service    | Business logic |
+| Repository | Data access    |
+
+**Concepts Learned:**
+- N-tier architecture
+- SOLID principles
+- Scalable design
+
+### UC16 – Database Integration (JDBC)
+
+**Description:**<br>
+Adds persistent storage using JDBC.
+
+**What We Did:**
+- Integrated database with JDBC
+- Replaced in-memory storage
+- Implemented CRUD operations
+- Enabled data persistence
+  
+**Example Usage:**
+
+| Operation | Result            |
+| --------- | ----------------- |
+| save()    | Data stored in DB |
+| fetch()   | Data retrieved    |
+
+**Concepts Learned:**
+- JDBC connectivity
+- CRUD operations
+- Persistence layer
+
+### UC17 – Spring Boot Integration
+
+**Description:**<br>
+Converts the project into a RESTful Spring Boot application.
+
+**What We Did:**
+- Migrated project to Spring Boot
+- Exposed REST APIs (GET, POST, PUT, DELETE)
+- Integrated Spring Data JPA
+- Added Swagger and Actuator
+  
+**Example Usage:**
+
+| API              | Description |
+| ---------------- | ----------- |
+| GET /quantities  | Fetch data  |
+| POST /quantities | Add data    |
+
+**Concepts Learned:**
+- REST API design
+- Spring Boot framework
+- JPA integration
+
+### UC18 – Spring Security with OAuth2 & JWT
+
+**Description:**<br>
+Implements secure authentication and authorization.
+
+**What We Did:**
+- Added Spring Security
+- Implemented JWT-based authentication
+- Integrated OAuth2 login
+- Secured APIs with role-based access
+  
+**Example Usage:**
+
+| Feature           | Result         |
+| ----------------- | -------------- |
+| JWT Login         | Secure token   |
+| OAuth2 Login      | Google login   |
+| Role-based access | API protection |
+
+**Concepts Learned:**
+- Authentication & Authorization
+- JWT tokens
+- OAuth2 integration
+- API security
