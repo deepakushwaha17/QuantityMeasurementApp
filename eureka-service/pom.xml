@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ✅ Point to YOUR root parent, NOT spring-boot-starter-parent directly -->
+    <!-- Root parent already inherits spring-boot-starter-parent internally   -->
+    <parent>
+        <groupId>com.app</groupId>
+        <artifactId>QuantityMeasurementApp</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>   <!-- path to root pom.xml -->
+    </parent>
+
+    <artifactId>eureka-service</artifactId>
+    <name>eureka-service</name>
+    <description>Eureka Discovery Server</description>
+    <!-- ✅ No <groupId> needed — inherited from parent (com.app) -->
+    <!-- ✅ No <version> needed — inherited from parent (0.0.1-SNAPSHOT) -->
+    <!-- ✅ No <dependencyManagement> needed — inherited from parent -->
+    <!-- ✅ No <properties> for spring-cloud.version — inherited from parent -->
+
+    <dependencies>
+
+        <!-- ✅ Web (correct artifact ID) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- ✅ Actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- ✅ Eureka Server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+
+        <!-- ✅ Test (correct, covers all testing needs) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
