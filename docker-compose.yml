@@ -1,0 +1,165 @@
+version: "3.9"
+
+networks:
+  quantity-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
+
+services:
+
+  # ── MySQL ──────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: quantity-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - quantity-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Eureka Service Discovery ───────────────────────────────
+  eureka-service:
+    build:
+      context: .
+      dockerfile: eureka-service/Dockerfile
+    container_name: eureka-service
+    restart: unless-stopped
+    environment:
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: ${EUREKA_SERVER_PORT:-8761}
+      EUREKA_SERVER_PORT: ${EUREKA_SERVER_PORT:-8761}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-prod}
+    ports:
+      - "${EUREKA_SERVER_PORT:-8761}:8761"
+    networks:
+      - quantity-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # ── User Service ───────────────────────────────────────────
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    container_name: user-service
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: ${DB_PORT:-3306}
+      DB_NAME: ${DB_NAME:-quantity_db}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: ${EUREKA_SERVER_PORT:-8761}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT:-8081}
+      JPA_DDL_AUTO: update
+      JPA_SHOW_SQL: "false"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-prod}
+    ports:
+      - "${USER_SERVICE_PORT:-8081}:8081"
+    networks:
+      - quantity-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ── Quantity Service ───────────────────────────────────────
+  quantity-service:
+    build:
+      context: .
+      dockerfile: quantity-service/Dockerfile
+    container_name: quantity-service
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: ${DB_PORT:-3306}
+      DB_NAME: ${DB_NAME:-quantity_db}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: ${EUREKA_SERVER_PORT:-8761}
+      QUANTITY_SERVICE_PORT: ${QUANTITY_SERVICE_PORT:-8082}
+      JPA_DDL_AUTO: update
+      JPA_SHOW_SQL: "false"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-prod}
+    ports:
+      - "${QUANTITY_SERVICE_PORT:-8082}:8082"
+    networks:
+      - quantity-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ── API Gateway ────────────────────────────────────────────
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-gateway
+    restart: unless-stopped
+    environment:
+      API_GATEWAY_PORT: ${API_GATEWAY_PORT:-8080}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      EUREKA_HOST: eureka-service
+      EUREKA_PORT: ${EUREKA_SERVER_PORT:-8761}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-prod}
+    ports:
+      - "${API_GATEWAY_PORT:-8080}:8080"
+    networks:
+      - quantity-net
+    depends_on:
+      eureka-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      quantity-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 60s

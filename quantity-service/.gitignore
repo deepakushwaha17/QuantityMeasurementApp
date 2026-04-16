@@ -4,12 +4,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### Env / Secrets — NEVER commit real credentials ###
-.env
-.env.local
-.env.*.local
-# .env.example is intentionally NOT ignored
-
 ### STS ###
 .apt_generated
 .classpath
@@ -37,5 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
-
-**/.env
+-e 
+### Env / Secrets ###
+.env
+.env.local

@@ -1,0 +1,38 @@
+version: "3.9"
+
+# Development overrides — use with:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Key differences from prod:
+#  - Mounts source instead of built JARs (requires local Maven build first)
+#  - Enables DEBUG logging
+#  - Exposes all ports directly
+#  - show-sql: true for JPA
+
+services:
+
+  mysql:
+    ports:
+      - "3306:3306"   # already exposed in base, kept for clarity
+
+  eureka-service:
+    environment:
+      LOG_LEVEL: DEBUG
+      SPRING_PROFILES_ACTIVE: dev
+
+  user-service:
+    environment:
+      JPA_SHOW_SQL: "true"
+      LOG_LEVEL: DEBUG
+      SPRING_PROFILES_ACTIVE: dev
+
+  quantity-service:
+    environment:
+      JPA_SHOW_SQL: "true"
+      LOG_LEVEL: DEBUG
+      SPRING_PROFILES_ACTIVE: dev
+
+  api-gateway:
+    environment:
+      LOG_LEVEL: DEBUG
+      SPRING_PROFILES_ACTIVE: dev
