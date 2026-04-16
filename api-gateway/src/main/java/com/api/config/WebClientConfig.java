@@ -8,8 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    // ✅ @LoadBalanced lets WebClient resolve "http://user-service"
-    // via Eureka — without this lb:// won't work
+    // @LoadBalanced lets WebClient resolve "http://user-service"
     @Bean
     @LoadBalanced
     public WebClient.Builder loadBalancedWebClientBuilder() {

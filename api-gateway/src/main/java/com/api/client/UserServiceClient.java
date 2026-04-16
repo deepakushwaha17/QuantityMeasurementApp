@@ -17,7 +17,7 @@ public class UserServiceClient {
 
     private final WebClient webClient;
 
-    // ✅ WebClient.Builder is auto-configured as @LoadBalanced by Spring Cloud
+    // WebClient.Builder is auto-configured as @LoadBalanced by Spring Cloud
     // as long as spring-cloud-starter-loadbalancer is in pom.xml
     public UserServiceClient(WebClient.Builder builder) {
         this.webClient = builder
@@ -33,7 +33,8 @@ public class UserServiceClient {
                 .onStatus(HttpStatusCode::is4xxClientError,
                         resp -> Mono.error(
                                 new UserNotFoundException("User not found: " + username)))
-                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserValidationResponse>>() {})
+                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserValidationResponse>>() {
+                })
                 .map(ApiResponse::getData);
     }
 
@@ -45,7 +46,8 @@ public class UserServiceClient {
                 .onStatus(HttpStatusCode::is4xxClientError,
                         resp -> Mono.error(
                                 new UserNotFoundException("User not found: " + email)))
-                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserValidationResponse>>() {})
+                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserValidationResponse>>() {
+                })
                 .map(ApiResponse::getData);
     }
 
@@ -63,35 +65,23 @@ public class UserServiceClient {
                         resp -> resp.bodyToMono(String.class)
                                 .flatMap(body -> Mono.error(
                                         new RuntimeException("User service error: " + body))))
-                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {})
+                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
+                })
                 .map(ApiResponse::getData);
     }
-
-//    public Mono<UserResponse> registerOAuth2User(RegisterRequest request) {
-//        log.info("Calling → POST /user/register/oauth2");
-//        return webClient.post()
-//                .uri("/user/register/oauth2")
-//                .bodyValue(request)
-//                .retrieve()
-//                .onStatus(HttpStatusCode::is4xxClientError,
-//                        resp -> resp.bodyToMono(String.class)
-//                                .flatMap(body -> Mono.error(
-//                                        new RuntimeException("OAuth2 registration failed: " + body))))
-//                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {})
-//                .map(ApiResponse::getData);
-//    }
 
     public Mono<UserResponse> registerOAuth2User(RegisterRequest request) {
         log.info("Calling → POST /user/register");
         return webClient.post()
-                .uri("/user/register")   // ✅ CORRECT
+                .uri("/user/register")
                 .bodyValue(request)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError,
                         resp -> resp.bodyToMono(String.class)
                                 .flatMap(body -> Mono.error(
                                         new RuntimeException("OAuth2 registration failed: " + body))))
-                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {})
+                .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
+                })
                 .map(ApiResponse::getData);
     }
 }

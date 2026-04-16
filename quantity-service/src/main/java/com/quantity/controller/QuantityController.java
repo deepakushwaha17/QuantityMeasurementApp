@@ -21,13 +21,13 @@ public class QuantityController {
 
     private final QuantityService quantityService;
 
-    // ✅ Extract Username
+    // Extract Username
     private String extractUsername(HttpServletRequest request) {
         String username = request.getHeader("X-Username");
         return (username != null && !username.isBlank()) ? username : "anonymous";
     }
 
-    // ✅ Extract UserId (NEW)
+    // Extract UserId
     private Long extractUserId(HttpServletRequest request) {
         String userId = request.getHeader("X-User-Id");
         return (userId != null) ? Long.parseLong(userId) : null;
@@ -149,7 +149,7 @@ public class QuantityController {
 
     // ──────────────── HISTORY APIs ────────────────
 
-    // ✅ Get all history (user-wise)
+    // Get all history (user-wise)
     @GetMapping("/history")
     public ResponseEntity<List<MeasurementHistory>> getHistory(HttpServletRequest request) {
         return ResponseEntity.ok(
@@ -157,7 +157,7 @@ public class QuantityController {
         );
     }
 
-    // ✅ Filter by OPERATION (UPDATED)
+    // Filter by OPERATION
     @GetMapping("/history/operation/{operation}")
     public ResponseEntity<List<MeasurementHistory>> getHistoryByOperation(
             @PathVariable String operation,

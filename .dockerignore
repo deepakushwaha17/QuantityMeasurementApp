@@ -1,0 +1,28 @@
+# Build artifacts
+**/target/
+**/.mvn/wrapper/maven-wrapper.jar
+
+# IDE files
+**/.idea/
+**/.vscode/
+**/*.iml
+
+# OS files
+**/.DS_Store
+**/Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Env files — NEVER bake secrets into images
+.env
+.env.*
+!.env.example
+
+# Logs
+**/*.log
+**/logs/
+
+# Node (if any frontend is added later)
+**/node_modules/

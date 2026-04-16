@@ -7,6 +7,11 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -20,24 +25,45 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+
         return http
+                // disable CSRF for APIs
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .authorizeExchange(exchanges -> exchanges
-                        // ✅ Permit all auth endpoints
+
                         .pathMatchers(
-                                "/auth/login",
-                                "/auth/register",
-                                "/oauth2/**",                          // ✅ OAuth2 flow
-                                "/login/oauth2/code/**",               // ✅ Google callback
-                                "/oauth2/authorization/**"             // ✅ Google redirect
+                                "/auth/**",
+                                "/oauth2/**",
+                                "/login/oauth2/**"
                         ).permitAll()
+
+                        // everything else allowed (you can restrict later)
                         .anyExchange().permitAll()
                 )
-                // ✅ Enable OAuth2 login with success handler
+
                 .oauth2Login(oauth2 -> oauth2
                         .authenticationSuccessHandler(oAuth2LoginSuccessHandler)
                 )
+
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 
     @Bean

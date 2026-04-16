@@ -100,7 +100,7 @@ public class QuantityService {
         return historyRepository.findByUserIdAndOperationOrderByCreatedAtDesc(userId, operation);
     }
 
-    // SAVE HISTORY (MAIN FIX)
+    // SAVE HISTORY
     private void saveHistory(QuantityInputDTO input,
                              QuantityMeasurementDTO result,
                              Long userId,

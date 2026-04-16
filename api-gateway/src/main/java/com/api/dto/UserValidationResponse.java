@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserValidationResponse {
 
-    private Long    id;
-    private String  username;
-    private String  email;
-    private String  password;   // BCrypt hash — used by Gateway for BCrypt.matches()
+    private Long id;
+    private String username;
+    private String email;
+    private String password;
     private boolean exists;
 }

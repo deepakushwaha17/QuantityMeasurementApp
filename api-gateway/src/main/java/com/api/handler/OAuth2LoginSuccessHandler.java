@@ -26,9 +26,7 @@ public class OAuth2LoginSuccessHandler implements ServerAuthenticationSuccessHan
     private final JwtUtil jwtUtil;
     private final UserServiceClient userServiceClient;
 
-    // ✅ Change this to your frontend URL if you have one
-    // For Postman testing keep it as below — token will be in redirect URL
-    private static final String REDIRECT_URL = "http://localhost:8080/auth/oauth2/success";
+    private static final String REDIRECT_URL = "http://localhost:3000/auth/oauth2/success";
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange,
@@ -94,6 +92,7 @@ public class OAuth2LoginSuccessHandler implements ServerAuthenticationSuccessHan
                 .fromUriString(REDIRECT_URL)
                 .queryParam("token", token)
                 .queryParam("username", username)
+                .queryParam("email", email)
                 .build().toUriString();
 
         return redirect(webFilterExchange, redirectUrl);
@@ -111,21 +110,12 @@ public class OAuth2LoginSuccessHandler implements ServerAuthenticationSuccessHan
     private Mono<Void> redirectWithError(WebFilterExchange webFilterExchange,
                                          String error) {
         String url = UriComponentsBuilder
-                .fromUriString(REDIRECT_URL)
+                .fromUriString("http://localhost:3000/login")
                 .queryParam("error", error)
                 .build().toUriString();
         return redirect(webFilterExchange, url);
     }
 
-    // ── Clean username from Google name ───────────────────────────────────────
-//    private String generateUsername(String name, String googleId) {
-//        if (name != null && !name.isBlank()) {
-//            return name.toLowerCase()
-//                    .replaceAll("\\s+", "_")      // spaces → underscores
-//                    .replaceAll("[^a-z0-9_]", ""); // remove special chars
-//        }
-//        return "user_" + googleId.substring(0, 8);
-//    }
     private String generateUsername(String name, String googleId) {
 
         String base = "user";
@@ -136,7 +126,6 @@ public class OAuth2LoginSuccessHandler implements ServerAuthenticationSuccessHan
                     .replaceAll("[^a-z0-9_]", "");
         }
 
-        // ✅ Ensure uniqueness
         return base + "_" + googleId.substring(0, 5);
     }
 }

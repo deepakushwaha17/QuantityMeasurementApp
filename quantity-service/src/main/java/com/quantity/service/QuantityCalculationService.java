@@ -57,7 +57,7 @@ public class QuantityCalculationService {
         boolean isEqual = Math.abs(val1 - val2) < 1e-5;
 
         return QuantityMeasurementDTO.builder()
-                .result((double) (isEqual ? 1 : 0))   // keep double
+                .result((double) (isEqual ? 1 : 0))
                 .unit("BOOLEAN_RESULT")
                 .type(input.getType())
                 .operation("COMPARE")
@@ -162,6 +162,9 @@ public class QuantityCalculationService {
 
         double base = toBase(input.getValue(), input.getUnit(), input.getType());
 
+        if (input.getSecondValue() == null) {
+            throw new IllegalArgumentException("secondValue is required for multiply");
+        }
         double multiplier = input.getSecondValue();
 
         double result = base * multiplier;

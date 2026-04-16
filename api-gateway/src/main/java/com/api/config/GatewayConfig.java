@@ -16,12 +16,6 @@ public class GatewayConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-
-                // ── Public auth routes (NO JWT required) ──
-//                .route("auth-login", r -> r
-//                        .path("/auth/login", "/auth/register")
-//                        .uri("forward:/auth"))   // handled internally
-
                 // ── User Service routes (protected) ──
                 .route("user-service", r -> r
                         .path("/user/**")
