@@ -36,7 +36,10 @@ public class SecurityConfig {
                         .pathMatchers(
                                 "/auth/**",
                                 "/oauth2/**",
-                                "/login/oauth2/**"
+                                "/login/oauth2/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+
                         ).permitAll()
 
                         // everything else allowed (you can restrict later)
